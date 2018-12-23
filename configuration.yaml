@@ -1,0 +1,241 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: Home
+  # Location required to calculate the time the sun rises and sets
+  latitude: 48.827907
+  longitude: 9.074669
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: 300
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: 
+  # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: Europe/Berlin
+  # Customization file
+  customize: !include customize.yaml
+
+# Show links to resources in log and frontend
+# introduction:
+
+# Enables the frontend
+frontend:
+ themes: !include_dir_merge_named themes
+ 
+# Enables configuration UI
+config:
+
+# Uncomment this if you are using SSL/TLS, running in Docker container, etc.
+# http:
+#   base_url: example.duckdns.org:8123 
+#Checks for available updates 
+# Note: This component will send some information about your system to 
+# the developers to assist with development of Home Assistant. For more 
+# information, please see: 
+# https://home-assistant.io/blog/2016/10/25/explaining-the-updater/
+updater:
+  # Optional, allows Home Assistant developers to focus on popular 
+  # components. include_used_components: true
+
+# Discover some devices automatically
+#discovery:
+
+# Allows you to issue voice commands from the frontend in enabled browsers
+conversation:
+
+# Enables support for tracking state changes over time
+history:
+
+# View all events in a logbook
+logbook:
+
+# Enables a map showing the location of tracked devices
+map:
+
+# Track the sun
+sun:
+
+# Weather prediction
+weather:
+ - platform: darksky
+   api_key: !secret weather_api
+
+# Text to speech
+tts:
+  - platform: google
+
+# Cloud
+cloud: 
+
+mqtt:
+ broker: localhost
+ port: 1883
+ protocol: 3.1.1
+ discovery: true
+ discovery_prefix: homeassistant 
+group: !include groups.yaml 
+automation: !include automations.yaml 
+script: !include scripts.yaml 
+
+light:
+  - platform: yeelight
+    devices:
+      192.168.178.101:
+        name: Strip Bett
+        transition: 1000
+        use_music_mode: False #(defaults to False)
+        save_on_change: False #(defaults to True)
+      192.168.178.102:
+        name: Bulb Wohnzimmer
+      192.168.178.103:
+        name: Lampe Kueche
+        transition: 1000
+        model: ceiling3
+      192.168.178.104:
+        name: Strip Wohnzimmer
+        transition: 1000
+        use_music_mode: False
+        save_on_change: False       
+
+sensor:
+#- platform: mqtt
+#  name: "Wemos_121_VCC" state_topic: "tele/sonoff_121/STATE" 
+#  value_template: "{{ value_json['Vcc'] }}" 
+#  unit_of_measurement: "V"
+- platform: mqtt
+  name: "Wemos_122_VCC"
+  state_topic: "tele/sonoff_122/STATE"
+  value_template: "{{ value_json['Vcc'] }}"
+  unit_of_measurement: "V"
+#- platform: mqtt
+#  name: "Wemos_122_DHT11_Temperature" state_topic: 
+#  "tele/sonoff_122/SENSOR" value_template: "{{ 
+#  value_json['DHT11'].Temperature | float-3.5 }}" 
+#  unit_of_measurement: "°C"
+- platform: mqtt
+  name: "Wemos_122_BME280_Temperature"
+  state_topic: "tele/sonoff_122/SENSOR"
+  value_template: "{{ value_json['BME280'].Temperature }}"
+  unit_of_measurement: "°C" 
+#- platform: mqtt
+#  name: "Wemos_122_DHT11_Humidity"
+#  state_topic: "tele/sonoff_122/SENSOR"
+# value_template: "{{ value_json['DHT11'].Humidity | float+3 }}"
+#  unit_of_measurement: "%" 
+- platform: mqtt
+  name: "Wemos_122_BME280_Humidity"
+  state_topic: "tele/sonoff_122/SENSOR"
+  value_template: "{{ value_json['BME280'].Humidity }}"
+  unit_of_measurement: "%" 
+- platform: mqtt
+  name: "Wemos_122_BME280_Pressure"
+  state_topic: "tele/sonoff_122/SENSOR"
+  value_template: "{{ value_json['BME280'].Pressure | float+0.7 }}"
+  unit_of_measurement: "hPa"
+#- platform: mqtt
+#  name: "Wemos_121_BME680_Humidity" 
+#  state_topic: "tele/sonoff_121/SENSOR" 
+#  value_template: "{{ value_json['BME680'].Humidity }}" 
+#  unit_of_measurement: "%" 
+#- platform: mqtt
+#  name: "Wemos_121_BME680_Temperature" 
+#  state_topic: "tele/sonoff_121/SENSOR" 
+#  value_template: "{{ value_json['BME680'].Temperature | float-0.7 }}" 
+#  unit_of_measurement: "°C" 
+#- platform: mqtt
+#  name: "Wemos_121_BME680_Pressure" 
+#  state_topic: "tele/sonoff_121/SENSOR"
+#  value_template: "{{ value_json['BME680'].Pressure }}" 
+#  unit_of_measurement: "hPa" 
+#- platform: mqtt
+#  name: "Wemos_121_BME680_Gas" 
+#  state_topic: "tele/sonoff_121/SENSOR" 
+#  value_template: "{{ value_json['BME680'].Gas }}" 
+#  unit_of_measurement: "kOhm"
+- platform: mqtt
+  name: "AM2301_Temperature"
+  state_topic: "tele/sonoff_106/SENSOR"
+  value_template: "{{ value_json['AM2301'].Temperature }}"
+  unit_of_measurement: "°C" 
+- platform: mqtt
+  name: "AM2301_Humidity"
+  state_topic: "tele/sonoff_106/SENSOR"
+  value_template: "{{ value_json['AM2301'].Humidity }}"
+  unit_of_measurement: "%" 
+- platform: yr 
+- platform: mqtt
+  name: "DS18x20_Temperature"
+  state_topic: "tele/sonoff_107/SENSOR"
+  value_template: "{{ value_json['DS18B20'].Temperature }}"
+  unit_of_measurement: "°C" 
+- platform: speedtest
+  monitored_conditions:
+  - ping
+  - download
+  - upload 
+- platform: uptime
+  name: Time Home Assistant is Online
+  unit_of_measurement: hours 
+
+switch:
+  - platform: mqtt
+    name: "Sonoff_105"
+    state_topic: "stat/sonoff_105/POWER"
+    command_topic: "cmnd/sonoff_105/POWER"
+    availability_topic: "tele/sonoff_105/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "online"
+    payload_not_available: "Offline"
+    retain: false
+  - platform: mqtt
+    name: "Sonoff_106"
+    state_topic: "stat/sonoff_106/POWER"
+    command_topic: "cmnd/sonoff_106/POWER"
+    availability_topic: "tele/sonoff_106/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "online"
+    payload_not_available: "Offline"
+    retain: false
+  - platform: mqtt
+    name: "Sonoff_107"
+    state_topic: "stat/sonoff_107/POWER"
+    command_topic: "cmnd/sonoff_107/POWER"
+    availability_topic: "tele/sonoff_107/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "online"
+    payload_not_available: "Offline"
+    retain: false 
+
+history_graph:
+ gr1:
+  name: Temperature Graph
+  entities:
+  - sensor.DS18x20_Temperature
+  - sensor.AM2301_Temperature
+#  - sensor.WEMOS_122_DHT11_Temperature
+  - sensor.WEMOS_122_BME280_Temperature
+  - sensor.WEMOS_121_BME680_Temperature
+  hours_to_show: 72
+  refresh: 60
+ gr2:
+  name: Humidity Graph
+  entities:
+  - sensor.AM2301_Humidity
+  - sensor.WEMOS_122_BME280_Humidity
+  - sensor.WEMOS_121_BME680_Humidity
+#  - sensor.WEMOS_122_DHT11_Humidity
+  hours_to_show: 72
+  refresh: 72 
+
+datadog: 
+
+notify:
+  - name: NOTIFIER_NAME
+    platform: pushover
+    api_key: !secret pushover_api
+    user_key: !secret  pushover_user
