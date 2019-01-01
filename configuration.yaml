@@ -176,6 +176,96 @@ sensor:
   name: Time Home Assistant is Online
   unit_of_measurement: hours 
 
+- platform: mqtt
+  name: "POWR2_PC_Voltage"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Voltage }}"
+  unit_of_measurement: "V"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Current"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Current | round(2) }}"
+  unit_of_measurement: "A"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Power"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Power }}"
+  unit_of_measurement: "W"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Power_Factor"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Factor }}"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Energy_Today"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Today }}"
+  unit_of_measurement: "kWh"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Energy_Yesterday"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Yesterday }}"
+  unit_of_measurement: "kWh"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Energy_Total"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Total }}"
+  unit_of_measurement: "kWh"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_Period"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].Period }}"
+  unit_of_measurement: "ms"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_ApparentPower"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].ApparentPower }}"
+  unit_of_measurement: "VA"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+- platform: mqtt
+  name: "POWR2_PC_ReactivePower"
+  state_topic: "tele/sonoff_108/SENSOR"
+  value_template: "{{ value_json['ENERGY'].ReactivePower }}"
+  unit_of_measurement: "VAr"
+  availability_topic: "tele/sonoff_108/LWT"
+  qos: 1
+  payload_available: "Online"
+  payload_not_available: "Offline"
+
 switch:
   - platform: mqtt
     name: "Sonoff_105"
@@ -185,7 +275,7 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    payload_available: "online"
+    payload_available: "Online"
     payload_not_available: "Offline"
     retain: false
   - platform: mqtt
@@ -196,7 +286,7 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    payload_available: "online"
+    payload_available: "Online"
     payload_not_available: "Offline"
     retain: false
   - platform: mqtt
@@ -207,9 +297,22 @@ switch:
     qos: 1
     payload_on: "ON"
     payload_off: "OFF"
-    payload_available: "online"
+    payload_available: "Online"
     payload_not_available: "Offline"
-    retain: false 
+    retain: false
+  - platform: mqtt
+    name: "POWR2_PC_Sonoff_108"
+    state_topic: "stat/sonoff_108/POWER"
+    value_template: "{{ value_json.POWER }}"
+    command_topic: "cmnd/sonoff_108/POWER"
+    availability_topic: "tele/sonoff_108/LWT"
+    qos: 1
+    payload_on: "ON"
+    payload_off: "OFF"
+    payload_available: "Online"
+    payload_not_available: "Offline"
+    retain: false
+ 
 
 history_graph:
  gr1:
@@ -234,8 +337,18 @@ history_graph:
 
 datadog: 
 
+
 notify:
   - name: NOTIFIER_NAME
     platform: pushover
     api_key: !secret pushover_api
     user_key: !secret  pushover_user
+
+logger:
+ default: warning
+ logs:
+  homeassistant.components.mqtt: debug
+  homeassistant.core: debug
+  homeassistant.helpers: debug
+  homeassistant.components.automation: debug
+

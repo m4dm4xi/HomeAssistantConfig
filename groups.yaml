@@ -1,0 +1,9 @@
+Sonoff_108_POWR2_PC:
+  - switch.POWR2_PC_Sonoff_108
+  - sensor.POWR2_PC_Voltage
+  - sensor.POWR2_PC_Current
+  - sensor.POWR2_PC_Power
+  - sensor.POWR2_PC_Power_Factor
+  - sensor.POWR2_PC_Energy_Today
+  - sensor.POWR2_PC_Energy_Yesterday
+  - sensor.POWR2_PC_Energy_Total
